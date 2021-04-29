@@ -1,5 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Col, Row, Typography, Skeleton, Button, message } from 'antd';
+import {
+	Col,
+	Row,
+	Typography,
+	Skeleton,
+	Button,
+	message,
+	Card,
+	Slider,
+} from 'antd';
 
 import { CreatePowertrain, GetPowertrains } from '../../api/PowertrainApi';
 import { Powertrain } from '../../models/Powertrain';
@@ -121,9 +130,31 @@ const PowertrainsPage = () => {
 
 			<br />
 
-			<Row align='middle'>
-				<Col span={16} offset={4}>
+			<Row align='top'>
+				<Col span={10} offset={4}>
 					{colorsTable}
+				</Col>
+				<Col span={6} offset={1}>
+					<Card title='Filter by id' bordered={true}>
+						<Slider
+							range
+							tooltipVisible
+							min={Math.min(...powertrains.map((obj) => Number(obj.id)))}
+							max={Math.max(...powertrains.map((obj) => Number(obj.id)))}
+							marks={{
+								[Math.min(
+									...powertrains.map((obj) => Number(obj.id)),
+								)]: Math.min(...powertrains.map((obj) => Number(obj.id))),
+								[Math.max(
+									...powertrains.map((obj) => Number(obj.id)),
+								)]: Math.max(...powertrains.map((obj) => Number(obj.id))),
+							}}
+							onChange={(value) => {
+								const data = powertrains.slice(value[0], value[1]);
+								setPowertrains(data);
+							}}
+						/>
+					</Card>
 				</Col>
 			</Row>
 		</>
