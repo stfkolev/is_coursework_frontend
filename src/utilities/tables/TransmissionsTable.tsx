@@ -1,43 +1,49 @@
 import React, { useState } from 'react';
 import { Table, Space, notification, Popconfirm, Button, message } from 'antd';
-import { CarType } from '../../models/CarType';
-import { DeleteCarType, UpdateCarType } from '../../api/CarTypeApi';
-import { EditCarTypeModal } from '../modals/carTypes/EditCarTypeModal';
+import { Transmission } from '../../models/Transmission';
+import {
+	DeleteTransmission,
+	UpdateTransmission,
+} from '../../api/TransmissionApi';
+import { EditTransmissionModal } from '../modals/transmissions/EditTransmissionModal';
 
 const { Column } = Table;
 
-interface CarTypesTableProps {
-	carTypes: CarType[];
-	onDelete: (carType: CarType) => void;
+interface TransmissionsTableProps {
+	transmissions: Transmission[];
+	onDelete: (transmission: Transmission) => void;
 	onEdit: () => void;
 }
 
-const openNotification = (carType: CarType) => {
+const openNotification = (transmission: Transmission) => {
 	notification['info']({
-		message: 'Selected Car Type',
-		description: `You have selected ${carType?.name} car type`,
+		message: 'Selected Transmission',
+		description: `You have selected ${transmission?.name} transmission`,
 		duration: 2,
 	});
 };
 
-const CarTypesTable: React.FC<CarTypesTableProps> = ({
-	carTypes,
+const TransmissionsTable: React.FC<TransmissionsTableProps> = ({
+	transmissions,
 	onEdit,
 	onDelete,
 }) => {
 	const [visible, setVisible] = useState(false);
 	const [activeModalId, setActiveModalId] = useState(BigInt(0));
 
-	const onEditInternal = async (values: CarType) => {
-		const result = await UpdateCarType({ id: values.id, name: values.name });
+	const onEditInternal = async (values: Transmission) => {
+		const result = await UpdateTransmission({
+			id: values.id,
+			name: values.name,
+		});
 
 		if (result === true) {
-			const key = 'carTypeEdit';
+			const key = 'transmissionEdit';
 
 			message.loading({ content: 'Loading...', key });
 			setTimeout(() => {
 				message.success({
-					content: `Successfully edited the car type name to '${values.name}'`,
+					content: `Successfully edited the transmission name to '${values.name}'`,
 					key,
 					duration: 1,
 				});
@@ -50,14 +56,14 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 		setActiveModalId(BigInt(0));
 	};
 	return (
-		<Table dataSource={carTypes} rowKey='id'>
+		<Table dataSource={transmissions} rowKey='id'>
 			<Column
-				title='Car Type ID'
+				title='Transmission ID'
 				dataIndex='id'
 				onCell={(record, rowIndex) => {
 					return {
 						onClick: (event) => {
-							const color = record as CarType;
+							const color = record as Transmission;
 
 							openNotification(color);
 						},
@@ -68,15 +74,15 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 			<Column
 				title='Name'
 				dataIndex='name'
-				sorter={(left: CarType, right: CarType) => {
+				sorter={(left: Transmission, right: Transmission) => {
 					return left.name.localeCompare(right.name);
 				}}
 				onCell={(record, rowIndex) => {
 					return {
 						onClick: (event) => {
-							const carType = record as CarType;
+							const transmission = record as Transmission;
 
-							openNotification(carType);
+							openNotification(transmission);
 						},
 					};
 				}}
@@ -85,15 +91,15 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 			<Column
 				title='Actions'
 				key='actions'
-				render={(text: any, record: CarType) => (
+				render={(text: any, record: Transmission) => (
 					<Space size='middle'>
 						<Popconfirm
-							title='Are you sure delete this car type?'
+							title='Are you sure delete this transmission?'
 							okType='danger'
 							onConfirm={async (event) => {
-								const result = await DeleteCarType(record);
+								const result = await DeleteTransmission(record);
 
-								onDelete(result as CarType);
+								onDelete(result as Transmission);
 							}}
 							onCancel={(event) => {
 								console.log(text);
@@ -117,8 +123,8 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 						</Button>
 
 						{activeModalId === record.id && (
-							<EditCarTypeModal
-								carType={record}
+							<EditTransmissionModal
+								transmission={record}
 								visible={visible}
 								onEdit={onEditInternal}
 								onCancel={() => {
@@ -133,4 +139,4 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 	);
 };
 
-export { CarTypesTable };
+export { TransmissionsTable };

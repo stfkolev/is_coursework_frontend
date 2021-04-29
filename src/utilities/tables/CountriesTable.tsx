@@ -1,43 +1,47 @@
 import React, { useState } from 'react';
 import { Table, Space, notification, Popconfirm, Button, message } from 'antd';
-import { CarType } from '../../models/CarType';
-import { DeleteCarType, UpdateCarType } from '../../api/CarTypeApi';
-import { EditCarTypeModal } from '../modals/carTypes/EditCarTypeModal';
+import { Country } from '../../models/Country';
+import { DeleteCountry, UpdateCountry } from '../../api/CountryApi';
+import { EditCountryModal } from '../modals/countries/EditCountryModal';
 
 const { Column } = Table;
 
-interface CarTypesTableProps {
-	carTypes: CarType[];
-	onDelete: (carType: CarType) => void;
+interface CountriesTableProps {
+	countries: Country[];
+	onDelete: (country: Country) => void;
 	onEdit: () => void;
 }
 
-const openNotification = (carType: CarType) => {
+const openNotification = (country: Country) => {
 	notification['info']({
-		message: 'Selected Car Type',
-		description: `You have selected ${carType?.name} car type`,
+		message: 'Selected Country',
+		description: `You have selected ${country?.name} country`,
 		duration: 2,
 	});
 };
 
-const CarTypesTable: React.FC<CarTypesTableProps> = ({
-	carTypes,
+const CountriesTable: React.FC<CountriesTableProps> = ({
+	countries,
 	onEdit,
 	onDelete,
 }) => {
 	const [visible, setVisible] = useState(false);
 	const [activeModalId, setActiveModalId] = useState(BigInt(0));
 
-	const onEditInternal = async (values: CarType) => {
-		const result = await UpdateCarType({ id: values.id, name: values.name });
+	const onEditInternal = async (values: Country) => {
+		const result = await UpdateCountry({
+			id: values.id,
+			name: values.name,
+			code: values.code,
+		});
 
 		if (result === true) {
-			const key = 'carTypeEdit';
+			const key = 'countryEdit';
 
 			message.loading({ content: 'Loading...', key });
 			setTimeout(() => {
 				message.success({
-					content: `Successfully edited the car type name to '${values.name}'`,
+					content: `Successfully edited the country name to '${values.name}'`,
 					key,
 					duration: 1,
 				});
@@ -50,14 +54,14 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 		setActiveModalId(BigInt(0));
 	};
 	return (
-		<Table dataSource={carTypes} rowKey='id'>
+		<Table dataSource={countries} rowKey='id'>
 			<Column
-				title='Car Type ID'
+				title='Country ID'
 				dataIndex='id'
 				onCell={(record, rowIndex) => {
 					return {
 						onClick: (event) => {
-							const color = record as CarType;
+							const color = record as Country;
 
 							openNotification(color);
 						},
@@ -68,15 +72,32 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 			<Column
 				title='Name'
 				dataIndex='name'
-				sorter={(left: CarType, right: CarType) => {
+				sorter={(left: Country, right: Country) => {
 					return left.name.localeCompare(right.name);
 				}}
 				onCell={(record, rowIndex) => {
 					return {
 						onClick: (event) => {
-							const carType = record as CarType;
+							const country = record as Country;
 
-							openNotification(carType);
+							openNotification(country);
+						},
+					};
+				}}
+			/>
+
+			<Column
+				title='Code'
+				dataIndex='code'
+				sorter={(left: Country, right: Country) => {
+					return left.code.localeCompare(right.code);
+				}}
+				onCell={(record, rowIndex) => {
+					return {
+						onClick: (event) => {
+							const country = record as Country;
+
+							openNotification(country);
 						},
 					};
 				}}
@@ -85,15 +106,15 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 			<Column
 				title='Actions'
 				key='actions'
-				render={(text: any, record: CarType) => (
+				render={(text: any, record: Country) => (
 					<Space size='middle'>
 						<Popconfirm
-							title='Are you sure delete this car type?'
+							title='Are you sure delete this country?'
 							okType='danger'
 							onConfirm={async (event) => {
-								const result = await DeleteCarType(record);
+								const result = await DeleteCountry(record);
 
-								onDelete(result as CarType);
+								onDelete(result as Country);
 							}}
 							onCancel={(event) => {
 								console.log(text);
@@ -117,8 +138,8 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 						</Button>
 
 						{activeModalId === record.id && (
-							<EditCarTypeModal
-								carType={record}
+							<EditCountryModal
+								country={record}
 								visible={visible}
 								onEdit={onEditInternal}
 								onCancel={() => {
@@ -133,4 +154,4 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 	);
 };
 
-export { CarTypesTable };
+export { CountriesTable };

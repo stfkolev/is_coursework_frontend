@@ -1,60 +1,64 @@
 import { useState, useEffect } from 'react';
 import { Col, Row, Typography, Skeleton, Button, message } from 'antd';
 
-import { CreateCarType, GetCarTypes } from '../../api/CarTypeApi';
-import { CarType } from '../../models/CarType';
-import { CarTypesTable } from '../../utilities/tables/CarTypesTable';
+import { CreateCountry, GetCountries } from '../../api/CountryApi';
+import { Country } from '../../models/Country';
+// import { CreateColorModal, Values } from '../utilities/modals/CreateColorModal';
+import { CountriesTable } from '../../utilities/tables/CountriesTable';
 import {
-	CreateCarTypeModal,
+	CreateCountryModal,
 	Values,
-} from '../../utilities/modals/carTypes/CreateCarTypeModal';
+} from '../../utilities/modals/countries/CreateCountryModal';
 
 const { Title } = Typography;
 
-const CarTypesPage = () => {
-	const [carTypes, setCarTypes] = useState<CarType[]>([]);
+const CountriesPage = () => {
+	const [countries, setCountries] = useState<Country[]>([]);
 	const [visible, setVisible] = useState(false);
 
 	const onEdit = async () => {
-		GetCarTypes().then((_carTypes) => {
-			setCarTypes(_carTypes);
+		GetCountries().then((_countries) => {
+			setCountries(_countries);
 		});
 	};
 
-	const onDelete = async (color: CarType) => {
-		const key = 'carTypeAdd';
+	const onDelete = async (color: Country) => {
+		const key = 'countryAdd';
 
 		message.loading({ content: 'Loading...', key });
 
 		setTimeout(() => {
 			message.success({
-				content: `Successfully deleted '${color.name}' from car types`,
+				content: `Successfully deleted '${color.name}' from countries`,
 				key,
 				duration: 1,
 			});
 
-			GetCarTypes().then((_carTypes) => {
-				setCarTypes(_carTypes);
+			GetCountries().then((_countries) => {
+				setCountries(_countries);
 			});
 		}, 1000);
 	};
 
 	const onCreate = async (values: Values) => {
-		const result = await CreateCarType({ name: values.name });
+		const result = await CreateCountry({
+			name: values.name,
+			code: values.code,
+		});
 
 		if (result.hasOwnProperty('name')) {
-			const key = 'carTypeAdd';
+			const key = 'countryAdd';
 
 			message.loading({ content: 'Loading...', key });
 			setTimeout(() => {
 				message.success({
-					content: `Successfully added '${values.name}' as car type`,
+					content: `Successfully added '${values.name}' as country`,
 					key,
 					duration: 1,
 				});
 
-				GetCarTypes().then((_carTypes) => {
-					setCarTypes(_carTypes);
+				GetCountries().then((_countries) => {
+					setCountries(_countries);
 				});
 			}, 1000);
 		}
@@ -64,26 +68,30 @@ const CarTypesPage = () => {
 
 	useEffect(() => {
 		/*! If there are colors already loaded, refresh the page every 30s */
-		if (carTypes.length > 0) {
+		if (countries.length > 0) {
 			setTimeout(() => {
-				GetCarTypes().then((_carTypes) => {
-					setCarTypes(_carTypes);
+				GetCountries().then((_countries) => {
+					setCountries(_countries);
 				});
 			}, 30000);
 		} else {
-			GetCarTypes().then((_carTypes) => {
-				setCarTypes(_carTypes);
+			GetCountries().then((_countries) => {
+				setCountries(_countries);
 			});
 		}
-	}, [carTypes]);
+	}, [countries]);
 
 	let colorsTable: any;
 
-	if (carTypes.length === 0) {
+	if (countries.length === 0) {
 		colorsTable = <Skeleton active />;
 	} else {
 		colorsTable = (
-			<CarTypesTable carTypes={carTypes} onEdit={onEdit} onDelete={onDelete} />
+			<CountriesTable
+				countries={countries}
+				onEdit={onEdit}
+				onDelete={onDelete}
+			/>
 		);
 	}
 
@@ -91,7 +99,7 @@ const CarTypesPage = () => {
 		<>
 			<Row justify='center' align='middle'>
 				<Col>
-					<Title>Car Types</Title>
+					<Title>Countries</Title>
 				</Col>
 			</Row>
 			<Row align='middle'>
@@ -101,10 +109,10 @@ const CarTypesPage = () => {
 						onClick={() => {
 							setVisible(true);
 						}}>
-						Add Car Type
+						Add Country
 					</Button>
 
-					<CreateCarTypeModal
+					<CreateCountryModal
 						visible={visible}
 						onCreate={onCreate}
 						onCancel={() => {
@@ -125,4 +133,4 @@ const CarTypesPage = () => {
 	);
 };
 
-export { CarTypesPage };
+export { CountriesPage };

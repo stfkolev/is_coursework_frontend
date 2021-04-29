@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import { Modal, Form, Input } from 'antd';
-import { CarType } from '../../models/CarType';
+import { Company } from '../../../models/Company';
 
-interface CarTypeEditFormProps {
-	carType: CarType;
+interface CompanyEditFormProps {
+	company: Company;
 	visible: boolean;
-	onEdit: (values: CarType) => void;
+	onEdit: (values: Company) => void;
 	onCancel: () => void;
 }
 
-const EditCarTypeModal: React.FC<CarTypeEditFormProps> = ({
-	carType,
+const EditCompanyModal: React.FC<CompanyEditFormProps> = ({
+	company,
 	visible,
 	onEdit,
 	onCancel,
@@ -18,13 +18,13 @@ const EditCarTypeModal: React.FC<CarTypeEditFormProps> = ({
 	const [form] = Form.useForm();
 
 	useEffect(() => {
-		form.setFieldsValue(carType);
-	}, [form, carType]);
+		form.setFieldsValue(company);
+	}, [form, company]);
 
 	return (
 		<Modal
 			visible={visible}
-			title='Edit car type'
+			title='Edit company'
 			okText='Save'
 			cancelText='Cancel'
 			onCancel={onCancel}
@@ -34,24 +34,24 @@ const EditCarTypeModal: React.FC<CarTypeEditFormProps> = ({
 					.then((values) => {
 						form.resetFields();
 
-						onEdit(values as CarType);
+						onEdit(values as Company);
 					})
 					.catch((info) => {
 						console.log('Validate Failed:', info);
 					});
 			}}>
 			<Form form={form} layout='vertical' name='form_in_modal'>
-				<Form.Item name='id' label='Car Type ID' rules={[{ required: true }]}>
+				<Form.Item name='id' label='Company ID' rules={[{ required: true }]}>
 					<Input disabled />
 				</Form.Item>
 
 				<Form.Item
 					name='name'
-					label='Car Type Name'
+					label='Company Name'
 					rules={[
 						{
 							required: true,
-							message: 'Please input the name of the car type!',
+							message: 'Please input the name of the company!',
 						},
 					]}>
 					<Input />
@@ -61,4 +61,4 @@ const EditCarTypeModal: React.FC<CarTypeEditFormProps> = ({
 	);
 };
 
-export { EditCarTypeModal };
+export { EditCompanyModal };

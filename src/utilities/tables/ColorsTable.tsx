@@ -1,43 +1,46 @@
 import React, { useState } from 'react';
 import { Table, Space, notification, Popconfirm, Button, message } from 'antd';
-import { CarType } from '../../models/CarType';
-import { DeleteCarType, UpdateCarType } from '../../api/CarTypeApi';
-import { EditCarTypeModal } from '../modals/carTypes/EditCarTypeModal';
+import { Color } from '../../models/Color';
+import { DeleteColor, UpdateColor } from '../../api/ColorApi';
+import { EditColorModal } from '../modals/colors/EditColorModal';
 
 const { Column } = Table;
 
-interface CarTypesTableProps {
-	carTypes: CarType[];
-	onDelete: (carType: CarType) => void;
+interface ColorsTableProps {
+	colors: Color[];
+	onDelete: (color: Color) => void;
 	onEdit: () => void;
 }
 
-const openNotification = (carType: CarType) => {
+const openNotification = (color: Color) => {
 	notification['info']({
-		message: 'Selected Car Type',
-		description: `You have selected ${carType?.name} car type`,
+		message: 'Selected Color',
+		description: `You have selected ${color?.name} color`,
 		duration: 2,
 	});
 };
 
-const CarTypesTable: React.FC<CarTypesTableProps> = ({
-	carTypes,
+const ColorsTable: React.FC<ColorsTableProps> = ({
+	colors,
 	onEdit,
 	onDelete,
 }) => {
 	const [visible, setVisible] = useState(false);
 	const [activeModalId, setActiveModalId] = useState(BigInt(0));
 
-	const onEditInternal = async (values: CarType) => {
-		const result = await UpdateCarType({ id: values.id, name: values.name });
+	const onEditInternal = async (values: Color) => {
+		const result = await UpdateColor({
+			id: values.id,
+			name: values.name,
+		});
 
 		if (result === true) {
-			const key = 'carTypeEdit';
+			const key = 'colorEdit';
 
 			message.loading({ content: 'Loading...', key });
 			setTimeout(() => {
 				message.success({
-					content: `Successfully edited the car type name to '${values.name}'`,
+					content: `Successfully edited the color name to '${values.name}'`,
 					key,
 					duration: 1,
 				});
@@ -50,14 +53,14 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 		setActiveModalId(BigInt(0));
 	};
 	return (
-		<Table dataSource={carTypes} rowKey='id'>
+		<Table dataSource={colors} rowKey='id'>
 			<Column
-				title='Car Type ID'
+				title='Color ID'
 				dataIndex='id'
 				onCell={(record, rowIndex) => {
 					return {
 						onClick: (event) => {
-							const color = record as CarType;
+							const color = record as Color;
 
 							openNotification(color);
 						},
@@ -68,15 +71,15 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 			<Column
 				title='Name'
 				dataIndex='name'
-				sorter={(left: CarType, right: CarType) => {
+				sorter={(left: Color, right: Color) => {
 					return left.name.localeCompare(right.name);
 				}}
 				onCell={(record, rowIndex) => {
 					return {
 						onClick: (event) => {
-							const carType = record as CarType;
+							const color = record as Color;
 
-							openNotification(carType);
+							openNotification(color);
 						},
 					};
 				}}
@@ -85,15 +88,15 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 			<Column
 				title='Actions'
 				key='actions'
-				render={(text: any, record: CarType) => (
+				render={(text: any, record: Color) => (
 					<Space size='middle'>
 						<Popconfirm
-							title='Are you sure delete this car type?'
+							title='Are you sure delete this color?'
 							okType='danger'
 							onConfirm={async (event) => {
-								const result = await DeleteCarType(record);
+								const result = await DeleteColor(record);
 
-								onDelete(result as CarType);
+								onDelete(result as Color);
 							}}
 							onCancel={(event) => {
 								console.log(text);
@@ -117,8 +120,8 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 						</Button>
 
 						{activeModalId === record.id && (
-							<EditCarTypeModal
-								carType={record}
+							<EditColorModal
+								color={record}
 								visible={visible}
 								onEdit={onEditInternal}
 								onCancel={() => {
@@ -133,4 +136,4 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 	);
 };
 
-export { CarTypesTable };
+export { ColorsTable };

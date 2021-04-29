@@ -1,43 +1,42 @@
 import React, { useState } from 'react';
 import { Table, Space, notification, Popconfirm, Button, message } from 'antd';
-import { CarType } from '../../models/CarType';
-import { DeleteCarType, UpdateCarType } from '../../api/CarTypeApi';
-import { EditCarTypeModal } from '../modals/carTypes/EditCarTypeModal';
+import { Fuel } from '../../models/Fuel';
+import { DeleteFuel, UpdateFuel } from '../../api/FuelApi';
+import { EditFuelModal } from '../modals/fuels/EditFuelModal';
 
 const { Column } = Table;
 
-interface CarTypesTableProps {
-	carTypes: CarType[];
-	onDelete: (carType: CarType) => void;
+interface FuelsTableProps {
+	fuels: Fuel[];
+	onDelete: (fuel: Fuel) => void;
 	onEdit: () => void;
 }
 
-const openNotification = (carType: CarType) => {
+const openNotification = (fuel: Fuel) => {
 	notification['info']({
-		message: 'Selected Car Type',
-		description: `You have selected ${carType?.name} car type`,
+		message: 'Selected Fuel',
+		description: `You have selected ${fuel?.name} fuel`,
 		duration: 2,
 	});
 };
 
-const CarTypesTable: React.FC<CarTypesTableProps> = ({
-	carTypes,
-	onEdit,
-	onDelete,
-}) => {
+const FuelsTable: React.FC<FuelsTableProps> = ({ fuels, onEdit, onDelete }) => {
 	const [visible, setVisible] = useState(false);
 	const [activeModalId, setActiveModalId] = useState(BigInt(0));
 
-	const onEditInternal = async (values: CarType) => {
-		const result = await UpdateCarType({ id: values.id, name: values.name });
+	const onEditInternal = async (values: Fuel) => {
+		const result = await UpdateFuel({
+			id: values.id,
+			name: values.name,
+		});
 
 		if (result === true) {
-			const key = 'carTypeEdit';
+			const key = 'fuelEdit';
 
 			message.loading({ content: 'Loading...', key });
 			setTimeout(() => {
 				message.success({
-					content: `Successfully edited the car type name to '${values.name}'`,
+					content: `Successfully edited the fuel name to '${values.name}'`,
 					key,
 					duration: 1,
 				});
@@ -50,14 +49,14 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 		setActiveModalId(BigInt(0));
 	};
 	return (
-		<Table dataSource={carTypes} rowKey='id'>
+		<Table dataSource={fuels} rowKey='id'>
 			<Column
-				title='Car Type ID'
+				title='Fuel ID'
 				dataIndex='id'
 				onCell={(record, rowIndex) => {
 					return {
 						onClick: (event) => {
-							const color = record as CarType;
+							const color = record as Fuel;
 
 							openNotification(color);
 						},
@@ -68,15 +67,15 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 			<Column
 				title='Name'
 				dataIndex='name'
-				sorter={(left: CarType, right: CarType) => {
+				sorter={(left: Fuel, right: Fuel) => {
 					return left.name.localeCompare(right.name);
 				}}
 				onCell={(record, rowIndex) => {
 					return {
 						onClick: (event) => {
-							const carType = record as CarType;
+							const fuel = record as Fuel;
 
-							openNotification(carType);
+							openNotification(fuel);
 						},
 					};
 				}}
@@ -85,15 +84,15 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 			<Column
 				title='Actions'
 				key='actions'
-				render={(text: any, record: CarType) => (
+				render={(text: any, record: Fuel) => (
 					<Space size='middle'>
 						<Popconfirm
-							title='Are you sure delete this car type?'
+							title='Are you sure delete this fuel?'
 							okType='danger'
 							onConfirm={async (event) => {
-								const result = await DeleteCarType(record);
+								const result = await DeleteFuel(record);
 
-								onDelete(result as CarType);
+								onDelete(result as Fuel);
 							}}
 							onCancel={(event) => {
 								console.log(text);
@@ -117,8 +116,8 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 						</Button>
 
 						{activeModalId === record.id && (
-							<EditCarTypeModal
-								carType={record}
+							<EditFuelModal
+								fuel={record}
 								visible={visible}
 								onEdit={onEditInternal}
 								onCancel={() => {
@@ -133,4 +132,4 @@ const CarTypesTable: React.FC<CarTypesTableProps> = ({
 	);
 };
 
-export { CarTypesTable };
+export { FuelsTable };
