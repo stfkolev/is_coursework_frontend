@@ -77,12 +77,12 @@ const CarTypesPage = () => {
 		}
 	}, [carTypes]);
 
-	let colorsTable: any;
+	let carTypesTable: any;
 
 	if (carTypes.length === 0) {
-		colorsTable = <Skeleton active />;
+		carTypesTable = <Skeleton active />;
 	} else {
-		colorsTable = (
+		carTypesTable = (
 			<CarTypesTable carTypes={carTypes} onEdit={onEdit} onDelete={onDelete} />
 		);
 	}
@@ -118,7 +118,7 @@ const CarTypesPage = () => {
 
 			<Row align='middle'>
 				<Col span={16} offset={4}>
-					{colorsTable}
+					{carTypesTable}
 				</Col>
 			</Row>
 		</>

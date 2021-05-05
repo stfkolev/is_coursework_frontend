@@ -78,12 +78,12 @@ const FuelsPage = () => {
 		}
 	}, [fuels]);
 
-	let colorsTable: any;
+	let fuelsTable: any;
 
 	if (fuels.length === 0) {
-		colorsTable = <Skeleton active />;
+		fuelsTable = <Skeleton active />;
 	} else {
-		colorsTable = (
+		fuelsTable = (
 			<FuelsTable fuels={fuels} onEdit={onEdit} onDelete={onDelete} />
 		);
 	}
@@ -119,7 +119,7 @@ const FuelsPage = () => {
 
 			<Row align='middle'>
 				<Col span={16} offset={4}>
-					{colorsTable}
+					{fuelsTable}
 				</Col>
 			</Row>
 		</>

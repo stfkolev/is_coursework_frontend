@@ -9,10 +9,10 @@ import {
 	Card,
 	Slider,
 } from 'antd';
+import { ClearOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 
 import { CreatePowertrain, GetPowertrains } from '../../api/PowertrainApi';
 import { Powertrain } from '../../models/Powertrain';
-// import { CreateColorModal, Values } from '../utilities/modals/CreateColorModal';
 import { PowertrainsTable } from '../../utilities/tables/PowertrainsTable';
 import {
 	CreatePowertrainModal,
@@ -23,11 +23,18 @@ const { Title } = Typography;
 
 const PowertrainsPage = () => {
 	const [powertrains, setPowertrains] = useState<Powertrain[]>([]);
+	const [filteredData, setFilteredData] = useState<Powertrain[]>([]);
 	const [visible, setVisible] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [sliderValues, setSliderValues] = useState<[number, number]>([0, 0]);
+	const [sliderMin, setSliderMin] = useState(0);
+	const [sliderMax, setSliderMax] = useState(0);
 
 	const onEdit = async () => {
 		GetPowertrains().then((_powertrains) => {
 			setPowertrains(_powertrains);
+			setSliderMin(Math.min(...powertrains.map((obj) => Number(obj.id))));
+			setSliderMax(Math.max(...powertrains.map((obj) => Number(obj.id))));
 		});
 	};
 
@@ -45,6 +52,8 @@ const PowertrainsPage = () => {
 
 			GetPowertrains().then((_powertrains) => {
 				setPowertrains(_powertrains);
+				setSliderMin(Math.min(...powertrains.map((obj) => Number(obj.id))));
+				setSliderMax(Math.max(...powertrains.map((obj) => Number(obj.id))));
 			});
 		}, 1000);
 	};
@@ -73,28 +82,25 @@ const PowertrainsPage = () => {
 	};
 
 	useEffect(() => {
-		/*! If there are colors already loaded, refresh the page every 30s */
-		if (powertrains.length > 0) {
-			setTimeout(() => {
-				GetPowertrains().then((_powertrains) => {
-					setPowertrains(_powertrains);
-				});
-			}, 30000);
-		} else {
-			GetPowertrains().then((_powertrains) => {
-				setPowertrains(_powertrains);
-			});
-		}
-	}, [powertrains]);
+		setLoading(true);
 
-	let colorsTable: any;
+		GetPowertrains().then((_powertrains) => {
+			setPowertrains(_powertrains);
+			setSliderMin(Math.min(..._powertrains.map((obj) => Number(obj.id))));
+			setSliderMax(Math.max(..._powertrains.map((obj) => Number(obj.id))));
+			setSliderValues([sliderMin, sliderMax]);
+			setLoading(false);
+		});
+	}, []);
+
+	let powertrainsTable: any;
 
 	if (powertrains.length === 0) {
-		colorsTable = <Skeleton active />;
+		powertrainsTable = <Skeleton active />;
 	} else {
-		colorsTable = (
+		powertrainsTable = (
 			<PowertrainsTable
-				powertrains={powertrains}
+				powertrains={filteredData.length > 0 ? filteredData : powertrains}
 				onEdit={onEdit}
 				onDelete={onDelete}
 			/>
@@ -115,7 +121,30 @@ const PowertrainsPage = () => {
 						onClick={() => {
 							setVisible(true);
 						}}>
+						<PlusOutlined />
 						Add Powertrain
+					</Button>
+					<Button
+						style={{ marginInlineStart: 16 }}
+						type='primary'
+						onClick={() => {
+							setLoading(true);
+
+							GetPowertrains().then((_powertrains) => {
+								setPowertrains(_powertrains);
+
+								setSliderMin(
+									Math.min(...powertrains.map((obj) => Number(obj.id))),
+								);
+								setSliderMax(
+									Math.max(...powertrains.map((obj) => Number(obj.id))),
+								);
+
+								setLoading(false);
+							});
+						}}>
+						<SyncOutlined spin={loading} />
+						Refresh
 					</Button>
 
 					<CreatePowertrainModal
@@ -132,30 +161,47 @@ const PowertrainsPage = () => {
 
 			<Row align='top'>
 				<Col span={10} offset={4}>
-					{colorsTable}
+					{powertrainsTable}
 				</Col>
-				<Col span={6} offset={1}>
-					<Card title='Filter by id' bordered={true}>
-						<Slider
-							range
-							tooltipVisible
-							min={Math.min(...powertrains.map((obj) => Number(obj.id)))}
-							max={Math.max(...powertrains.map((obj) => Number(obj.id)))}
-							marks={{
-								[Math.min(
-									...powertrains.map((obj) => Number(obj.id)),
-								)]: Math.min(...powertrains.map((obj) => Number(obj.id))),
-								[Math.max(
-									...powertrains.map((obj) => Number(obj.id)),
-								)]: Math.max(...powertrains.map((obj) => Number(obj.id))),
-							}}
-							onChange={(value) => {
-								const data = powertrains.slice(value[0], value[1]);
-								setPowertrains(data);
-							}}
-						/>
-					</Card>
-				</Col>
+				{!loading ? (
+					<Col span={6} offset={1}>
+						<Card title='Filter by id' bordered={true}>
+							<Slider
+								range
+								tooltipVisible
+								min={sliderMin}
+								max={sliderMax}
+								value={sliderValues}
+								defaultValue={[sliderMin, sliderMax]}
+								marks={{
+									[sliderMin]: sliderMin,
+									[sliderMax]: sliderMax,
+								}}
+								onAfterChange={(value) => {
+									setSliderValues([value[0] - 1, value[1]]);
+									const data = powertrains.slice(
+										sliderValues[0],
+										sliderValues[1],
+									);
+
+									console.log({ sliderValues });
+									console.log(data);
+									setFilteredData(data);
+								}}
+							/>
+							<Button
+								style={{ float: 'right' }}
+								type='default'
+								onClick={() => {
+									setFilteredData([]);
+									setSliderValues([sliderMin, sliderMax]);
+								}}>
+								<ClearOutlined />
+								Reset
+							</Button>
+						</Card>
+					</Col>
+				) : null}
 			</Row>
 		</>
 	);

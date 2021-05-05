@@ -78,12 +78,12 @@ const CompaniesPage = () => {
 		}
 	}, [companies]);
 
-	let colorsTable: any;
+	let companiesTable: any;
 
 	if (companies.length === 0) {
-		colorsTable = <Skeleton active />;
+		companiesTable = <Skeleton active />;
 	} else {
-		colorsTable = (
+		companiesTable = (
 			<CompaniesTable
 				companies={companies}
 				onEdit={onEdit}
@@ -123,7 +123,7 @@ const CompaniesPage = () => {
 
 			<Row align='middle'>
 				<Col span={16} offset={4}>
-					{colorsTable}
+					{companiesTable}
 				</Col>
 			</Row>
 		</>

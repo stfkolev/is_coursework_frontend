@@ -81,12 +81,12 @@ const CountriesPage = () => {
 		}
 	}, [countries]);
 
-	let colorsTable: any;
+	let countriesTable: any;
 
 	if (countries.length === 0) {
-		colorsTable = <Skeleton active />;
+		countriesTable = <Skeleton active />;
 	} else {
-		colorsTable = (
+		countriesTable = (
 			<CountriesTable
 				countries={countries}
 				onEdit={onEdit}
@@ -126,7 +126,7 @@ const CountriesPage = () => {
 
 			<Row align='middle'>
 				<Col span={16} offset={4}>
-					{colorsTable}
+					{countriesTable}
 				</Col>
 			</Row>
 		</>

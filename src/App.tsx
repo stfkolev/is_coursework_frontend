@@ -19,6 +19,9 @@ const { Content } = Layout;
 function App() {
 	return (
 		<>
+			<head>
+				<title>asd</title>
+			</head>
 			<HeaderLine />
 
 			<Content

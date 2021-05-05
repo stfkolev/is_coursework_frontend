@@ -81,12 +81,12 @@ const TransmissionsPage = () => {
 		}
 	}, [transmissions]);
 
-	let colorsTable: any;
+	let transmissionsTable: any;
 
 	if (transmissions.length === 0) {
-		colorsTable = <Skeleton active />;
+		transmissionsTable = <Skeleton active />;
 	} else {
-		colorsTable = (
+		transmissionsTable = (
 			<TransmissionsTable
 				transmissions={transmissions}
 				onEdit={onEdit}
@@ -126,7 +126,7 @@ const TransmissionsPage = () => {
 
 			<Row align='middle'>
 				<Col span={16} offset={4}>
-					{colorsTable}
+					{transmissionsTable}
 				</Col>
 			</Row>
 		</>
