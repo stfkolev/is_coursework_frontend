@@ -9,6 +9,7 @@ import {
 	Input,
 	Slider,
 	Card,
+	DatePicker,
 } from 'antd';
 
 import moment from 'moment';
@@ -28,6 +29,7 @@ import {
 
 const { Title } = Typography;
 const { Search } = Input;
+const { RangePicker } = DatePicker;
 
 const ManufacturersPage = () => {
 	const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
@@ -239,6 +241,47 @@ const ManufacturersPage = () => {
 											const data = manufacturers.slice(value[0] - 1, value[1]);
 
 											console.log(data);
+											setFilteredData(data);
+										}}
+									/>
+								</Card>
+							</Col>
+							<Col span={24} style={{ marginTop: 16 }}>
+								<Card title='Filter by License Expiry Date' bordered={true}>
+									<RangePicker
+										style={{ width: '100%' }}
+										ranges={{
+											Today: [moment(), moment()],
+											'This Week': [
+												moment().startOf('week'),
+												moment().endOf('week'),
+											],
+											'This Month': [
+												moment().startOf('month'),
+												moment().endOf('month'),
+											],
+											'This Year': [
+												moment().startOf('year'),
+												moment().endOf('year'),
+											],
+										}}
+										size='large'
+										onChange={(values) => {
+											const data = manufacturers.filter(
+												(obj) =>
+													moment(obj.createdAt).unix() >=
+														moment(values?.[0]).unix() &&
+													moment(obj.createdAt).unix() <=
+														moment(values?.[1]).unix(),
+											);
+
+											if (data.length === 0) {
+												message.error({
+													content: 'No data found! Showing all records...',
+													duration: 2,
+												});
+											}
+
 											setFilteredData(data);
 										}}
 									/>
