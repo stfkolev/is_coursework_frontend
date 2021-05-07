@@ -11,7 +11,7 @@ async function GetClients(): Promise<Client[]> {
 }
 async function GetClientById(id: bigint): Promise<Client> {
 	const result = await axios
-		.get(apiUrl('clients') + id)
+		.get(apiUrl('clients') + `/${id}`)
 		.then((response) => response.data);
 
 	return result as Client;

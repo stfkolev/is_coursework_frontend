@@ -108,7 +108,7 @@ const CreateClientModal: React.FC<ClientCreateFormProps> = ({
 							message: 'Please input the license expiry date of the client!',
 						},
 					]}>
-					<DatePicker />
+					<DatePicker style={{ width: '100%' }} />
 				</Form.Item>
 			</Form>
 		</Modal>

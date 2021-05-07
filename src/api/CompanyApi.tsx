@@ -11,7 +11,7 @@ async function GetCompanies(): Promise<Company[]> {
 }
 async function GetCompanyById(id: bigint): Promise<Company> {
 	const result = await axios
-		.get(apiUrl('companies') + id)
+		.get(apiUrl('companies') + `/${id}`)
 		.then((response) => response.data);
 
 	return result as Company;

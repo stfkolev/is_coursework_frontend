@@ -11,7 +11,7 @@ async function GetFuels(): Promise<Fuel[]> {
 }
 async function GetFuelById(id: bigint): Promise<Fuel> {
 	const result = await axios
-		.get(apiUrl('fuels') + id)
+		.get(apiUrl('fuels') + `/${id}`)
 		.then((response) => response.data);
 
 	return result as Fuel;

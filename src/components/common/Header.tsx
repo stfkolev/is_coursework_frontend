@@ -10,6 +10,8 @@ import {
 	FlagFilled,
 	BgColorsOutlined,
 	UserOutlined,
+	BankOutlined,
+	ToolFilled,
 } from '@ant-design/icons';
 
 const { Header } = Layout;
@@ -77,7 +79,7 @@ const HeaderLine = () => {
 					</Menu.Item>
 					<Menu.Item key='companies'>
 						<RouterLink to='/companies' exact>
-							<BgColorsOutlined />
+							<BankOutlined />
 							Companies
 						</RouterLink>
 					</Menu.Item>
@@ -85,6 +87,36 @@ const HeaderLine = () => {
 						<RouterLink to='/clients' exact>
 							<UserOutlined />
 							Clients
+						</RouterLink>
+					</Menu.Item>
+					<Menu.Item key='manufacturers'>
+						<RouterLink to='/manufacturers' exact>
+							<ToolFilled />
+							Manufacturers
+						</RouterLink>
+					</Menu.Item>
+					<Menu.Item key='models'>
+						<RouterLink to='/clients' exact>
+							<UserOutlined />
+							Models
+						</RouterLink>
+					</Menu.Item>
+					<Menu.Item key='cars'>
+						<RouterLink to='/clients' exact>
+							<UserOutlined />
+							Cars
+						</RouterLink>
+					</Menu.Item>
+					<Menu.Item key='engines'>
+						<RouterLink to='/clients' exact>
+							<UserOutlined />
+							Engines
+						</RouterLink>
+					</Menu.Item>
+					<Menu.Item key='rents'>
+						<RouterLink to='/clients' exact>
+							<UserOutlined />
+							Rents
 						</RouterLink>
 					</Menu.Item>
 				</Menu>

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Modal, Form, Input, DatePicker } from 'antd';
+import { Modal, Form, Input } from 'antd';
 import { Client } from '../../../models/Client';
 
 interface ClientEditFormProps {
@@ -101,17 +101,6 @@ const EditClientModal: React.FC<ClientEditFormProps> = ({
 						},
 					]}>
 					<Input />
-				</Form.Item>
-				<Form.Item
-					name='licenseExpiryDate'
-					label='Client License Expiry Date'
-					rules={[
-						{
-							required: true,
-							message: 'Please input the license expiry date of the client!',
-						},
-					]}>
-					<DatePicker />
 				</Form.Item>
 			</Form>
 		</Modal>

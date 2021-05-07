@@ -11,7 +11,7 @@ async function GetTransmissions(): Promise<Transmission[]> {
 }
 async function GetTransmissionById(id: bigint): Promise<Transmission> {
 	const result = await axios
-		.get(apiUrl('transmissions') + id)
+		.get(apiUrl('transmissions') + `/${id}`)
 		.then((response) => response.data);
 
 	return result as Transmission;

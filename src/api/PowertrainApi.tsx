@@ -11,7 +11,7 @@ async function GetPowertrains(): Promise<Powertrain[]> {
 }
 async function GetPowertrainById(id: bigint): Promise<Powertrain> {
 	const result = await axios
-		.get(apiUrl('powertrains') + id)
+		.get(apiUrl('powertrains') + `/${id}`)
 		.then((response) => response.data);
 
 	return result as Powertrain;

@@ -11,7 +11,7 @@ async function GetColors(): Promise<Color[]> {
 }
 async function GetColorById(id: bigint): Promise<Color> {
 	const result = await axios
-		.get(apiUrl('colors') + id)
+		.get(apiUrl('colors') + `/${id}`)
 		.then((response) => response.data);
 
 	return result as Color;

@@ -11,7 +11,7 @@ async function GetCarTypes(): Promise<CarType[]> {
 }
 async function GetCarTypeById(id: bigint): Promise<CarType> {
 	const result = await axios
-		.get(apiUrl('carTypes') + id)
+		.get(apiUrl('carTypes') + `/${id}`)
 		.then((response) => response.data);
 
 	return result as CarType;

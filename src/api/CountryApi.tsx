@@ -11,7 +11,7 @@ async function GetCountries(): Promise<Country[]> {
 }
 async function GetCountryById(id: bigint): Promise<Country> {
 	const result = await axios
-		.get(apiUrl('countries') + id)
+		.get(apiUrl('countries') + `/${id}`)
 		.then((response) => response.data);
 
 	return result as Country;
