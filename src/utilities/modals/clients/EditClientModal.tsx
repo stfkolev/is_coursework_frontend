@@ -102,6 +102,17 @@ const EditClientModal: React.FC<ClientEditFormProps> = ({
 					]}>
 					<Input />
 				</Form.Item>
+
+				<Form.Item
+					name='licenseExpiryDate'
+					rules={[
+						{
+							required: true,
+							message:
+								'Please input the license expiry date of the manufacturer!',
+						},
+					]}
+				/>
 			</Form>
 		</Modal>
 	);

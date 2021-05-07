@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Select } from 'antd';
+import { Modal, Form, Input, Select, DatePicker } from 'antd';
 import { Manufacturer } from '../../../models/Manufacturer';
 import { Country } from '../../../models/Country';
 import { GetCountries } from '../../../api/CountryApi';
@@ -27,7 +27,12 @@ const EditManufacturerModal: React.FC<ManufacturerEditFormProps> = ({
 	}, []);
 
 	useEffect(() => {
-		form.setFieldsValue(manufacturer);
+		form.setFieldsValue({
+			id: manufacturer.id,
+			name: manufacturer.name,
+			countryId: manufacturer.countryId,
+			createdAt: manufacturer.createdAt,
+		});
 	}, [form, manufacturer]);
 
 	return (
@@ -87,6 +92,16 @@ const EditManufacturerModal: React.FC<ManufacturerEditFormProps> = ({
 						))}
 					</Select>
 				</Form.Item>
+
+				<Form.Item
+					name='createdAt'
+					rules={[
+						{
+							required: true,
+							message: 'Please input the creation date of the manufacturer!',
+						},
+					]}
+				/>
 			</Form>
 		</Modal>
 	);
