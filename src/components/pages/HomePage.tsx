@@ -1,9 +1,13 @@
 import { Link } from 'react-router-dom';
 import { Row, Col, Button, Carousel, Typography } from 'antd';
+import { useEffect } from 'react';
 
 const { Title } = Typography;
 
 function HomePage() {
+	useEffect(() => {
+		document.title = `Home | Задание 25`;
+	}, []);
 	return (
 		<>
 			<Row justify='center' align='middle'>

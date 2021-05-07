@@ -9,6 +9,7 @@ import {
 	FireFilled,
 	FlagFilled,
 	BgColorsOutlined,
+	UserOutlined,
 } from '@ant-design/icons';
 
 const { Header } = Layout;
@@ -78,6 +79,12 @@ const HeaderLine = () => {
 						<RouterLink to='/companies' exact>
 							<BgColorsOutlined />
 							Companies
+						</RouterLink>
+					</Menu.Item>
+					<Menu.Item key='clients'>
+						<RouterLink to='/clients' exact>
+							<UserOutlined />
+							Clients
 						</RouterLink>
 					</Menu.Item>
 				</Menu>

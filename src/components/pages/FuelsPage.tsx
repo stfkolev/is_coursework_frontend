@@ -1,9 +1,20 @@
 import { useState, useEffect } from 'react';
-import { Col, Row, Typography, Skeleton, Button, message } from 'antd';
+import {
+	Col,
+	Row,
+	Typography,
+	Skeleton,
+	Button,
+	message,
+	Input,
+	Slider,
+	Card,
+} from 'antd';
+
+import { PlusOutlined, SyncOutlined } from '@ant-design/icons';
 
 import { CreateFuel, GetFuels } from '../../api/FuelApi';
 import { Fuel } from '../../models/Fuel';
-// import { CreateColorModal, Values } from '../utilities/modals/CreateColorModal';
 import { FuelsTable } from '../../utilities/tables/FuelsTable';
 import {
 	CreateFuelModal,
@@ -11,14 +22,22 @@ import {
 } from '../../utilities/modals/fuels/CreateFuelModal';
 
 const { Title } = Typography;
+const { Search } = Input;
 
 const FuelsPage = () => {
 	const [fuels, setFuels] = useState<Fuel[]>([]);
+	const [filteredData, setFilteredData] = useState<Fuel[]>([]);
 	const [visible, setVisible] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [sliderMin, setSliderMin] = useState(0);
+	const [sliderMax, setSliderMax] = useState(0);
 
 	const onEdit = async () => {
 		GetFuels().then((_fuels) => {
 			setFuels(_fuels);
+
+			setSliderMin(Math.min(...fuels.map((obj) => Number(obj.id))));
+			setSliderMax(Math.max(...fuels.map((obj) => Number(obj.id))));
 		});
 	};
 
@@ -36,6 +55,8 @@ const FuelsPage = () => {
 
 			GetFuels().then((_fuels) => {
 				setFuels(_fuels);
+				setSliderMin(Math.min(...fuels.map((obj) => Number(obj.id))));
+				setSliderMax(Math.max(...fuels.map((obj) => Number(obj.id))));
 			});
 		}, 1000);
 	};
@@ -56,6 +77,8 @@ const FuelsPage = () => {
 
 				GetFuels().then((_fuels) => {
 					setFuels(_fuels);
+					setSliderMin(Math.min(...fuels.map((obj) => Number(obj.id))));
+					setSliderMax(Math.max(...fuels.map((obj) => Number(obj.id))));
 				});
 			}, 1000);
 		}
@@ -64,19 +87,16 @@ const FuelsPage = () => {
 	};
 
 	useEffect(() => {
-		/*! If there are colors already loaded, refresh the page every 30s */
-		if (fuels.length > 0) {
-			setTimeout(() => {
-				GetFuels().then((_fuels) => {
-					setFuels(_fuels);
-				});
-			}, 30000);
-		} else {
-			GetFuels().then((_fuels) => {
-				setFuels(_fuels);
-			});
-		}
-	}, [fuels]);
+		document.title = `Fuels | Задание 25`;
+
+		setLoading(true);
+		GetFuels().then((_fuels) => {
+			setFuels(_fuels);
+			setSliderMin(Math.min(..._fuels.map((obj) => Number(obj.id))));
+			setSliderMax(Math.max(..._fuels.map((obj) => Number(obj.id))));
+			setLoading(false);
+		});
+	}, []);
 
 	let fuelsTable: any;
 
@@ -84,7 +104,11 @@ const FuelsPage = () => {
 		fuelsTable = <Skeleton active />;
 	} else {
 		fuelsTable = (
-			<FuelsTable fuels={fuels} onEdit={onEdit} onDelete={onDelete} />
+			<FuelsTable
+				fuels={filteredData.length > 0 ? filteredData : fuels}
+				onEdit={onEdit}
+				onDelete={onDelete}
+			/>
 		);
 	}
 
@@ -102,7 +126,26 @@ const FuelsPage = () => {
 						onClick={() => {
 							setVisible(true);
 						}}>
+						<PlusOutlined />
 						Add Fuel
+					</Button>
+					<Button
+						style={{ marginInlineStart: 16 }}
+						type='primary'
+						onClick={() => {
+							setLoading(true);
+
+							GetFuels().then((_fuels) => {
+								setFuels(_fuels);
+
+								setSliderMin(Math.min(...fuels.map((obj) => Number(obj.id))));
+								setSliderMax(Math.max(...fuels.map((obj) => Number(obj.id))));
+
+								setLoading(false);
+							});
+						}}>
+						<SyncOutlined spin={loading} />
+						Refresh
 					</Button>
 
 					<CreateFuelModal
@@ -117,10 +160,77 @@ const FuelsPage = () => {
 
 			<br />
 
-			<Row align='middle'>
-				<Col span={16} offset={4}>
+			<Row align='top'>
+				<Col span={10} offset={4}>
 					{fuelsTable}
 				</Col>
+				{!loading ? (
+					<Col span={6} offset={1}>
+						<Row align='top'>
+							<Col span={24}>
+								<Card title='Search' bordered={true}>
+									<Search
+										placeholder='Enter keyword...'
+										onSearch={(value) => {
+											const key = 'updateable';
+											const data = fuels.filter((obj) =>
+												obj.name.toLowerCase().includes(value.toLowerCase()),
+											);
+
+											message.loading({
+												content: ' Searching in records...',
+												key,
+											});
+
+											if (data.length === 0) {
+												setTimeout(() => {
+													message.error({
+														content: 'No data found!',
+														key: key,
+														duration: 2,
+													});
+												}, 1000);
+											} else {
+												setTimeout(() => {
+													message.success({
+														content: 'Successfully filtered records!',
+														key: key,
+														duration: 2,
+													});
+
+													setFilteredData(data);
+												}, 1000);
+											}
+										}}
+										allowClear
+										enterButton
+									/>
+								</Card>
+							</Col>
+							<Col span={24} style={{ marginTop: 16 }}>
+								<Card title='Filter by id' bordered={true}>
+									<Slider
+										range
+										tooltipVisible
+										min={sliderMin}
+										max={sliderMax}
+										defaultValue={[sliderMin, sliderMax]}
+										marks={{
+											[sliderMin]: sliderMin,
+											[sliderMax]: sliderMax,
+										}}
+										onAfterChange={(value) => {
+											const data = fuels.slice(value[0] - 1, value[1]);
+
+											console.log(data);
+											setFilteredData(data);
+										}}
+									/>
+								</Card>
+							</Col>
+						</Row>
+					</Col>
+				) : null}
 			</Row>
 		</>
 	);
