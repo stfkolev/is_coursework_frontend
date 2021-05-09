@@ -105,7 +105,7 @@ const HeaderLine = () => {
 						</RouterLink>
 					</Menu.Item>
 					<Menu.Item key='cars'>
-						<RouterLink to='/clients' exact>
+						<RouterLink to='/cars' exact>
 							<CarFilled />
 							Cars
 						</RouterLink>
@@ -117,7 +117,7 @@ const HeaderLine = () => {
 						</RouterLink>
 					</Menu.Item>
 					<Menu.Item key='rents'>
-						<RouterLink to='/clients' exact>
+						<RouterLink to='/rents' exact>
 							<DollarCircleFilled />
 							Rents
 						</RouterLink>
