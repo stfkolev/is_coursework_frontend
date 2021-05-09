@@ -12,6 +12,9 @@ import {
 	UserOutlined,
 	BankOutlined,
 	ToolFilled,
+	StarFilled,
+	DeploymentUnitOutlined,
+	DollarCircleFilled,
 } from '@ant-design/icons';
 
 const { Header } = Layout;
@@ -43,7 +46,7 @@ const HeaderLine = () => {
 					</Menu.Item>
 					<Menu.Item key='carTypes'>
 						<RouterLink to='/carTypes' exact>
-							<CarFilled />
+							<DeploymentUnitOutlined />
 							Car Types
 						</RouterLink>
 					</Menu.Item>
@@ -96,26 +99,26 @@ const HeaderLine = () => {
 						</RouterLink>
 					</Menu.Item>
 					<Menu.Item key='models'>
-						<RouterLink to='/clients' exact>
-							<UserOutlined />
+						<RouterLink to='/models' exact>
+							<StarFilled />
 							Models
 						</RouterLink>
 					</Menu.Item>
 					<Menu.Item key='cars'>
 						<RouterLink to='/clients' exact>
-							<UserOutlined />
+							<CarFilled />
 							Cars
 						</RouterLink>
 					</Menu.Item>
 					<Menu.Item key='engines'>
-						<RouterLink to='/clients' exact>
-							<UserOutlined />
+						<RouterLink to='/engines' exact>
+							<ToolFilled />
 							Engines
 						</RouterLink>
 					</Menu.Item>
 					<Menu.Item key='rents'>
 						<RouterLink to='/clients' exact>
-							<UserOutlined />
+							<DollarCircleFilled />
 							Rents
 						</RouterLink>
 					</Menu.Item>

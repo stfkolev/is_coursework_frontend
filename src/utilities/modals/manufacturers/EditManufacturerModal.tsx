@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Select, DatePicker } from 'antd';
+import { Modal, Form, Input, Select } from 'antd';
 import { Manufacturer } from '../../../models/Manufacturer';
 import { Country } from '../../../models/Country';
 import { GetCountries } from '../../../api/CountryApi';
