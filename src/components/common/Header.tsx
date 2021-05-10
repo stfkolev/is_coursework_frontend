@@ -15,6 +15,7 @@ import {
 	StarFilled,
 	DeploymentUnitOutlined,
 	DollarCircleFilled,
+	RocketFilled,
 } from '@ant-design/icons';
 
 const { Header } = Layout;
@@ -112,7 +113,7 @@ const HeaderLine = () => {
 					</Menu.Item>
 					<Menu.Item key='engines'>
 						<RouterLink to='/engines' exact>
-							<ToolFilled />
+							<RocketFilled />
 							Engines
 						</RouterLink>
 					</Menu.Item>

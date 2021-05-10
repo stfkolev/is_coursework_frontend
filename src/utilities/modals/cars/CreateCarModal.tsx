@@ -90,7 +90,7 @@ const CreateCarModal: React.FC<CarCreateFormProps> = ({
 							message: 'Please input the seats of the car!',
 						},
 					]}>
-					<InputNumber min={3} max={10} style={{width: '100%'}} />
+					<InputNumber min={3} max={10} style={{ width: '100%' }} />
 				</Form.Item>
 
 				<Form.Item
@@ -102,7 +102,11 @@ const CreateCarModal: React.FC<CarCreateFormProps> = ({
 							message: 'Please input the luggage space of the car!',
 						},
 					]}>
-					<Switch checkedChildren='Yes' unCheckedChildren='No'/>
+					<Switch
+						checkedChildren='Yes'
+						unCheckedChildren='No'
+						defaultChecked={false}
+					/>
 				</Form.Item>
 
 				<Form.Item
@@ -114,7 +118,11 @@ const CreateCarModal: React.FC<CarCreateFormProps> = ({
 							message: 'Please input the technical approvement of the car!',
 						},
 					]}>
-					<Switch checkedChildren='Yes' unCheckedChildren='No'/>
+					<Switch
+						checkedChildren='Yes'
+						unCheckedChildren='No'
+						defaultChecked={false}
+					/>
 				</Form.Item>
 
 				<Form.Item
