@@ -18,6 +18,7 @@ import { ManufacturersPage } from './components/pages/ManufacturersPage';
 import { ModelsPage } from './components/pages/ModelsPage';
 import { EnginesPage } from './components/pages/EnginesPage';
 import { CarsPage } from './components/pages/CarsPage';
+import { RentsPage } from './components/pages/RentsPage';
 
 const { Content } = Layout;
 
@@ -46,6 +47,7 @@ function App() {
 					<Route path='/models' exact component={ModelsPage} />
 					<Route path='/engines' exact component={EnginesPage} />
 					<Route path='/cars' exact component={CarsPage} />
+					<Route path='/rents' exact component={RentsPage} />
 					<Route component={PageNotFound} />
 				</Switch>
 			</Content>
