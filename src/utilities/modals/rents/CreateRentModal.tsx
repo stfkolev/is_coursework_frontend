@@ -88,6 +88,9 @@ const CreateRentModal: React.FC<RentCreateFormProps> = ({
 					<DatePicker
 						defaultValue={moment()}
 						style={{ width: '100%' }}
+						disabledDate={(current) => {
+							return current < moment();
+						}}
 						onSelect={(value) => {
 							setSelectedDate(moment(value).toDate());
 							console.log({ value });
