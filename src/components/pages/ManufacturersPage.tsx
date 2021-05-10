@@ -247,7 +247,7 @@ const ManufacturersPage = () => {
 								</Card>
 							</Col>
 							<Col span={24} style={{ marginTop: 16 }}>
-								<Card title='Filter by License Expiry Date' bordered={true}>
+								<Card title='Filter by Creation Date' bordered={true}>
 									<RangePicker
 										style={{ width: '100%' }}
 										ranges={{
@@ -263,6 +263,10 @@ const ManufacturersPage = () => {
 											'This Year': [
 												moment().startOf('year'),
 												moment().endOf('year'),
+											],
+											'This Millenia': [
+												moment('2000').startOf('year'),
+												moment('2099').endOf('year'),
 											],
 										}}
 										size='large'

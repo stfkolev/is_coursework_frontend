@@ -25,6 +25,7 @@ const ColorsTable: React.FC<ColorsTableProps> = ({
 	onEdit,
 	onDelete,
 }) => {
+	const [pageSize, setPageSize] = useState(5);
 	const [visible, setVisible] = useState(false);
 	const [activeModalId, setActiveModalId] = useState(BigInt(0));
 
@@ -53,7 +54,14 @@ const ColorsTable: React.FC<ColorsTableProps> = ({
 		setActiveModalId(BigInt(0));
 	};
 	return (
-		<Table dataSource={colors} rowKey='id'>
+		<Table
+			dataSource={colors}
+			rowKey='id'
+			pagination={{
+				showSizeChanger: true,
+				onShowSizeChange: (current, pageSize) => setPageSize(pageSize),
+				pageSize: pageSize,
+			}}>
 			<Column
 				title='Color ID'
 				dataIndex='id'
