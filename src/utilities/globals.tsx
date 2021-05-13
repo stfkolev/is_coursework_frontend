@@ -5,4 +5,11 @@ const ApiRequest = (url: string): Promise<any> => {
 	return axios.get(url).then((response) => response.data);
 };
 
-export { apiUrl, ApiRequest };
+const prices = {
+	pricePerSeat: 1.53,
+	pricePerLiterDisplacement: 4.23,
+	pricePerHorsepower: 0.11,
+	priceForLuggaceSpace: 4.91,
+};
+
+export { apiUrl, ApiRequest, prices };

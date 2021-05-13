@@ -9,7 +9,7 @@ async function GetCars(): Promise<Car[]> {
 
 	return result as Car[];
 }
-async function GetCarById(id: bigint): Promise<Car> {
+async function GetCarById(id: number): Promise<Car> {
 	const result = await axios
 		.get(apiUrl('cars') + `/${id}`)
 		.then((response) => response.data);
@@ -17,16 +17,16 @@ async function GetCarById(id: bigint): Promise<Car> {
 	return result as Car;
 }
 
-async function CreateCar(data: { 	
-	numberPlate: string,
+async function CreateCar(data: {
+	numberPlate: string;
 
-	seats: number,
-	luggageSpace: boolean,
-	technicallyApproved: boolean,
+	seats: number;
+	luggageSpace: boolean;
+	technicallyApproved: boolean;
 
-	modelId: bigint,
-	colorId: bigint,
-	engineId: bigint,
+	modelId: bigint;
+	colorId: bigint;
+	engineId: bigint;
 }): Promise<Car> {
 	const result = await axios
 		.post(apiUrl('cars'), data)
@@ -53,10 +53,4 @@ async function UpdateCar(car: Car): Promise<Boolean> {
 	return result as Boolean;
 }
 
-export {
-	GetCars,
-	GetCarById,
-	CreateCar,
-	DeleteCar,
-	UpdateCar,
-};
+export { GetCars, GetCarById, CreateCar, DeleteCar, UpdateCar };

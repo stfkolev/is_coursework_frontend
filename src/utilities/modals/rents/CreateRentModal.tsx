@@ -3,10 +3,15 @@ import { Modal, Form, Select, DatePicker, InputNumber } from 'antd';
 import { Car } from '../../../models/Car';
 import { Client } from '../../../models/Client';
 import { Company } from '../../../models/Company';
-import { GetCars } from '../../../api/CarApi';
+import { GetCarById, GetCars } from '../../../api/CarApi';
 import { GetCompanies } from '../../../api/CompanyApi';
 import { GetClients } from '../../../api/ClientApi';
 import moment from 'moment';
+import { prices } from '../../globals';
+import { GetEngineById } from '../../../api/EngineApi';
+import { Engine } from '../../../models/Engine';
+import { GetRents } from '../../../api/RentApi';
+import { Rent } from '../../../models/Rent';
 
 export interface Values {
 	price: number;
@@ -27,22 +32,48 @@ interface RentCreateFormProps {
 
 const { Option } = Select;
 
+const isAvailableForRent = (car: Car, rents: Rent[]) => {
+	const result = rents.some((obj) => {
+		const expr =
+			moment().isBetween(obj.pickUpDate, obj.dropOffDate) &&
+			car.id === obj.carId;
+
+		// console.log(
+		// 	`${obj.carId} -- ${obj.pickUpDate} -- ${
+		// 		obj.dropOffDate
+		// 	} -- ${!moment().isBetween(obj.pickUpDate, obj.dropOffDate)} -- -- ${
+		// 		car.id
+		// 	} ${obj.carId !== car.id}`,
+		// );
+
+		// console.log(`carId === car.id: ${obj.carId === car.id} -- expr: ${expr}`);
+
+		return expr;
+	});
+
+	return !result;
+};
+
 const CreateRentModal: React.FC<RentCreateFormProps> = ({
 	visible,
 	onCreate,
 	onCancel,
 }) => {
 	const [form] = Form.useForm();
+	const [rents, setRents] = useState<Rent[]>([]);
 	const [cars, setCars] = useState<Car[]>([]);
 	const [clients, setClients] = useState<Client[]>([]);
 	const [companies, setCompanies] = useState<Company[]>([]);
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const [dropOffDate, setDropOffDate] = useState<Date>(new Date());
+	const [price, setPrice] = useState(0.0);
 
 	useEffect(() => {
 		GetCars().then((values) => setCars(values));
 		GetClients().then((values) => setClients(values));
 		GetCompanies().then((values) => setCompanies(values));
-	}, []);
+		GetRents().then((values) => setRents(values));
+	}, [price]);
 
 	return (
 		<Modal
@@ -73,7 +104,13 @@ const CreateRentModal: React.FC<RentCreateFormProps> = ({
 							message: 'Please input the price of the rent!',
 						},
 					]}>
-					<InputNumber min={1.0} max={10000.0} style={{ width: '100%' }} />
+					<InputNumber
+						min={1.0}
+						max={10000.0}
+						style={{ width: '100%' }}
+						value={price}
+						disabled
+					/>
 				</Form.Item>
 
 				<Form.Item
@@ -112,6 +149,9 @@ const CreateRentModal: React.FC<RentCreateFormProps> = ({
 						disabledDate={(current) => {
 							return current && current < moment(selectedDate).startOf('day');
 						}}
+						onSelect={(current) => {
+							setDropOffDate(moment(current).toDate());
+						}}
 					/>
 				</Form.Item>
 
@@ -144,14 +184,46 @@ const CreateRentModal: React.FC<RentCreateFormProps> = ({
 							message: 'Please input the car of the rent!',
 						},
 					]}>
-					<Select allowClear>
-						{cars.map((data) => (
-							<Option
-								key={data.id.toString()}
-								value={Number.parseInt(data.id.toString())}>
-								{data.numberPlate}
-							</Option>
-						))}
+					<Select
+						allowClear
+						onSelect={(value: number) => {
+							GetCarById(value).then((car: Car) => {
+								let calculatePrice = 0.0;
+
+								calculatePrice += car.seats * prices.pricePerSeat;
+								calculatePrice += car.luggageSpace
+									? prices.priceForLuggaceSpace
+									: 0.0;
+
+								GetEngineById(car.engineId).then((engine: Engine) => {
+									calculatePrice +=
+										(engine.displacement / 1000) *
+										prices.pricePerLiterDisplacement;
+									calculatePrice += engine.power * prices.pricePerHorsepower;
+
+									const dateDiffInDays = moment(dropOffDate).diff(
+										selectedDate,
+										'days',
+									);
+									setPrice(calculatePrice * dateDiffInDays);
+
+									console.log({ price });
+
+									form.setFieldsValue({ price: price });
+								});
+							});
+						}}>
+						{cars.map((data) => {
+							if (isAvailableForRent(data, rents)) {
+								return (
+									<Option
+										key={data.id.toString()}
+										value={Number.parseInt(data.id.toString())}>
+										{data.numberPlate}
+									</Option>
+								);
+							}
+						})}
 					</Select>
 				</Form.Item>
 
