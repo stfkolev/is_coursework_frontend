@@ -32,28 +32,6 @@ interface RentCreateFormProps {
 
 const { Option } = Select;
 
-const isAvailableForRent = (car: Car, rents: Rent[]) => {
-	const result = rents.some((obj) => {
-		const expr =
-			moment().isBetween(obj.pickUpDate, obj.dropOffDate) &&
-			car.id === obj.carId;
-
-		// console.log(
-		// 	`${obj.carId} -- ${obj.pickUpDate} -- ${
-		// 		obj.dropOffDate
-		// 	} -- ${!moment().isBetween(obj.pickUpDate, obj.dropOffDate)} -- -- ${
-		// 		car.id
-		// 	} ${obj.carId !== car.id}`,
-		// );
-
-		// console.log(`carId === car.id: ${obj.carId === car.id} -- expr: ${expr}`);
-
-		return expr;
-	});
-
-	return !result;
-};
-
 const CreateRentModal: React.FC<RentCreateFormProps> = ({
 	visible,
 	onCreate,
@@ -66,14 +44,41 @@ const CreateRentModal: React.FC<RentCreateFormProps> = ({
 	const [companies, setCompanies] = useState<Company[]>([]);
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [dropOffDate, setDropOffDate] = useState<Date>(new Date());
-	const [price, setPrice] = useState(0.0);
+
+	const isAvailableForRent = (car: Car, rents: Rent[]) => {
+		const result = rents.some((obj) => {
+			// console.log(selectedDate);
+			// console.log(dropOffDate);
+			// console.log({ obj });
+
+			// console.log(moment().isBetween(obj.pickUpDate, obj.dropOffDate));
+			// // if selectedDate < pickUpDate && dropOffDate > obj.dropoffDate
+			// console.log(
+			// 	moment(selectedDate).isBefore(obj.pickUpDate) &&
+			// 		moment(dropOffDate).isAfter(selectedDate),
+			// );
+			// console.log(
+			// 	(moment().isBetween(obj.pickUpDate, obj.dropOffDate) ||
+			// 		moment().isBetween(selectedDate, dropOffDate)) &&
+			// 		car.id === obj.carId,
+			// );
+			return (
+				moment().isBetween(obj.pickUpDate, obj.dropOffDate) &&
+				moment(selectedDate).isBetween(obj.pickUpDate, obj.dropOffDate) &&
+				moment(dropOffDate).isBetween(obj.pickUpDate, obj.dropOffDate) &&
+				car.id === obj.carId
+			);
+		});
+
+		return !result;
+	};
 
 	useEffect(() => {
 		GetCars().then((values) => setCars(values));
 		GetClients().then((values) => setClients(values));
 		GetCompanies().then((values) => setCompanies(values));
 		GetRents().then((values) => setRents(values));
-	}, [price]);
+	}, []);
 
 	return (
 		<Modal
@@ -108,7 +113,6 @@ const CreateRentModal: React.FC<RentCreateFormProps> = ({
 						min={1.0}
 						max={10000.0}
 						style={{ width: '100%' }}
-						value={price}
 						disabled
 					/>
 				</Form.Item>
@@ -201,15 +205,17 @@ const CreateRentModal: React.FC<RentCreateFormProps> = ({
 										prices.pricePerLiterDisplacement;
 									calculatePrice += engine.power * prices.pricePerHorsepower;
 
-									const dateDiffInDays = moment(dropOffDate).diff(
-										selectedDate,
-										'days',
-									);
-									setPrice(calculatePrice * dateDiffInDays);
+									const dateDiffInDays =
+										moment(dropOffDate).diff(selectedDate, 'days') === 0
+											? 1
+											: moment(dropOffDate).diff(selectedDate, 'days');
 
-									console.log({ price });
-
-									form.setFieldsValue({ price: price });
+									// console.log({ calculatePrice });
+									// console.log({ dateDiffInDays });
+									// console.log(calculatePrice * dateDiffInDays);
+									form.setFieldsValue({
+										price: calculatePrice * dateDiffInDays,
+									});
 								});
 							});
 						}}>
