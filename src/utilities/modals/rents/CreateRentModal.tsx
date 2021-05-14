@@ -45,6 +45,37 @@ const CreateRentModal: React.FC<RentCreateFormProps> = ({
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [dropOffDate, setDropOffDate] = useState<Date>(new Date());
 
+	const [selectedCarId, setSelectedCarId] = useState<number>(0);
+
+	/*! Helpers */
+	const recalculatePrice = (value: number) => {
+		GetCarById(value).then((car: Car) => {
+			let calculatePrice = 0.0;
+
+			calculatePrice += car.seats * prices.pricePerSeat;
+			calculatePrice += car.luggageSpace ? prices.priceForLuggaceSpace : 0.0;
+
+			GetEngineById(car.engineId).then((engine: Engine) => {
+				calculatePrice +=
+					(engine.displacement / 1000) * prices.pricePerLiterDisplacement;
+				calculatePrice += engine.power * prices.pricePerHorsepower;
+
+				const dateDiffInDays =
+					moment(dropOffDate).diff(selectedDate, 'days') === 0
+						? 1
+						: moment(dropOffDate).diff(selectedDate, 'days');
+
+				console.log({ calculatePrice });
+				console.log({ dateDiffInDays });
+				console.log(calculatePrice * dateDiffInDays);
+
+				form.setFieldsValue({
+					price: calculatePrice * dateDiffInDays,
+				});
+			});
+		});
+	};
+
 	const isAvailableForRent = (car: Car, rents: Rent[]) => {
 		const result = rents.some((obj) => {
 			// console.log(selectedDate);
@@ -134,7 +165,11 @@ const CreateRentModal: React.FC<RentCreateFormProps> = ({
 						}}
 						onSelect={(value) => {
 							setSelectedDate(moment(value).toDate());
-							console.log({ value });
+
+							if (selectedCarId !== 0) {
+								console.log(selectedCarId);
+								recalculatePrice(selectedCarId);
+							}
 						}}
 					/>
 				</Form.Item>
@@ -155,6 +190,11 @@ const CreateRentModal: React.FC<RentCreateFormProps> = ({
 						}}
 						onSelect={(current) => {
 							setDropOffDate(moment(current).toDate());
+
+							if (selectedCarId !== 0) {
+								console.log(selectedCarId);
+								recalculatePrice(selectedCarId);
+							}
 						}}
 					/>
 				</Form.Item>
@@ -191,33 +231,9 @@ const CreateRentModal: React.FC<RentCreateFormProps> = ({
 					<Select
 						allowClear
 						onSelect={(value: number) => {
-							GetCarById(value).then((car: Car) => {
-								let calculatePrice = 0.0;
+							setSelectedCarId(value);
 
-								calculatePrice += car.seats * prices.pricePerSeat;
-								calculatePrice += car.luggageSpace
-									? prices.priceForLuggaceSpace
-									: 0.0;
-
-								GetEngineById(car.engineId).then((engine: Engine) => {
-									calculatePrice +=
-										(engine.displacement / 1000) *
-										prices.pricePerLiterDisplacement;
-									calculatePrice += engine.power * prices.pricePerHorsepower;
-
-									const dateDiffInDays =
-										moment(dropOffDate).diff(selectedDate, 'days') === 0
-											? 1
-											: moment(dropOffDate).diff(selectedDate, 'days');
-
-									// console.log({ calculatePrice });
-									// console.log({ dateDiffInDays });
-									// console.log(calculatePrice * dateDiffInDays);
-									form.setFieldsValue({
-										price: calculatePrice * dateDiffInDays,
-									});
-								});
-							});
+							recalculatePrice(value);
 						}}>
 						{cars.map((data) => {
 							if (isAvailableForRent(data, rents)) {
